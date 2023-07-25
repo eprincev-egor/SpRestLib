@@ -84,7 +84,11 @@
 		nodeServer:       '',
 		overwriteUploads: false,
 		queryLimit:       null, /* default queryLimit - allows global override of default SP "100 rows" limit */
-		retryAfter:       1000
+		retryAfter:       1000,
+		https:            null, /* custom lib for http/https requests on nodejs */
+		http:             null,
+		httpsAgent:       null, /* custom http agent for connections, see https://nodejs.org/dist/latest-v18.x/docs/api/http.html#class-httpagent */
+		httpAgent:        null
 	};
 	// APP AUTHENTICATION
 	var APP_AUTH = {
@@ -366,6 +370,11 @@
 		APP_OPTS.nodeEnabled = (typeof inOpt.nodeEnabled !== 'undefined' ? inOpt.nodeEnabled : true);
 		APP_OPTS.nodeCookie = inOpt.cookie || '';
 		APP_OPTS.nodeServer = inOpt.server || '';
+		APP_OPTS.https = inOpt.https || null;
+		APP_OPTS.http = inOpt.http || null;
+		APP_OPTS.httpAgent = inOpt.httpAgent || null;
+		APP_OPTS.http = inOpt.http || null;
+		APP_OPTS.httpAgent = inOpt.httpAgent || null;
 	}
 
 	// TODO: TARGET-1.11.0: Add `baseUrl` to `file()` method
@@ -2180,6 +2189,9 @@
 			.then(function(){
 				return new Promise(function(resolve, reject) {
 					if ( APP_OPTS.nodeEnabled ) {
+						if ( APP_OPTS.https || APP_OPTS.http ) {
+							https = APP_OPTS.https || APP_OPTS.http;
+						}
 						if ( !https ) {
 							// Declare https on-demand so APP_OPTS applies (if we init `https` with the library Angular/React/etc will fail on load as users have not had a chance to select any options)
 							try { https = require("https"); } catch(ex){ console.error("Unable to load `https`"); throw 'LIB-MISSING-HTTPS'; }
@@ -2195,6 +2207,12 @@
 							method:   objAjaxQuery.type,
 							headers:  objAjaxQuery.headers
 						};
+						// custom connection agent
+						// @see https://nodejs.org/dist/latest-v18.x/docs/api/http.html#class-httpagent
+						if ( APP_OPTS.httpsAgent || APP_OPTS.httpAgent ) {
+							options.agent = APP_OPTS.httpsAgent || APP_OPTS.httpAgent;
+						}
+
 						var request = https.request(options, function(res){
 							var rawData = '';
 							res.setEncoding( inOpt.headers && inOpt.headers.binaryStringResponseBody ? 'binary' : 'utf8' );
