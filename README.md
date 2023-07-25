@@ -1,6 +1,4 @@
-[![npm version](https://img.shields.io/npm/v/sprestlib.svg)](https://www.npmjs.com/package/sprestlib)  [![MIT License](https://img.shields.io/github/license/gitbrent/sprestlib.svg)](https://github.com/gitbrent/SpRestLib/blob/master/LICENSE)  [![Known Vulnerabilities](https://snyk.io/test/npm/sprestlib/badge.svg)](https://snyk.io/test/npm/sprestlib)  [![Package Quality](http://npm.packagequality.com/shield/sprestlib.png?style=flat-square)](https://github.com/gitbrent/sprestlib)  [![jsDelivr Stats](https://data.jsdelivr.com/v1/package/npm/sprestlib/badge)](https://www.jsdelivr.com/package/npm/sprestlib)
-
-# SpRestLib
+# SpRestLib (FORK https://github.com/eprincev-egor/SpRestLib)
 
 ## Microsoft SharePoint REST JavaScript Library
 SpRestLib is a lightweight wrapper around the SharePoint REST API that can be used in client browsers or server-side.

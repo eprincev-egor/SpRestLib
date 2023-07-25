@@ -1,12 +1,11 @@
 {
-	"name": "sprestlib",
+	"name": "sprestlib-proxy-agent",
 	"version": "1.10.0-beta",
 	"author": {
-		"name": "Brent Ely",
-		"url": "https://github.com/gitbrent/"
+		"name": "Eprincev Egor",
+		"url": "https://github.com/eprincev-egor"
 	},
-	"description": "SharePoint REST Web Services JavaScript Library",
-	"homepage": "https://gitbrent.github.io/SpRestLib/",
+	"description": "Fork of SharePoint REST Web Services JavaScript Library",
 	"license": "MIT",
 	"dependencies": {
 		"https": ">=1.0.0"
@@ -30,7 +29,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/gitbrent/sprestlib.git"
+		"url": "git+https://github.com/eprincev-egor/SpRestLib.git"
 	},
 	"keywords": [
 		"javascript-rest-library",
@@ -50,10 +49,11 @@
 		"sharepoint-rest-api",
 		"sharepoint-rest-library",
 		"sharepoint-web-services",
-		"sharepoint-web-services-library"
+		"sharepoint-web-services-library",
+		"sharepoint-http-proxy"
 	],
 	"bugs": {
-		"url": "https://github.com/gitbrent/sprestlib/issues"
+		"url": "https://github.com/eprincev-egor/SpRestLib/issues"
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
