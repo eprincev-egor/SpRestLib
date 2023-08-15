@@ -1141,7 +1141,6 @@
 		_newFolder.upload = function(inOpt) {
 			return new Promise(function(resolve, reject) {
 				// A: Options setup
-				var urlBase = ( APP_OPTS.baseUrl.indexOf('http') == 0 || APP_OPTS.baseUrl.indexOf('/') == 0 ? APP_OPTS.baseUrl : ( _spPageContextInfo && _spPageContextInfo.webServerRelativeUrl ? _spPageContextInfo.webServerRelativeUrl : APP_OPTS.baseUrl ) );
 				inOpt = (inOpt ? inOpt : null);
 				inOpt.digest    = ( inOpt.requestDigest || (typeof document !== 'undefined' && document.getElementById('__REQUESTDIGEST') ? document.getElementById('__REQUESTDIGEST').value : null) );
 				inOpt.overwrite = ( typeof(inOpt.overwrite) !== 'undefined' && inOpt.overwrite != null ? inOpt.overwrite : APP_OPTS.overwriteUploads );
@@ -1151,7 +1150,8 @@
 					url: "_api/web/GetFolderByServerRelativeUrl('"+_fullName+"')/Files/add(url='"+inOpt.name+"',overwrite="+inOpt.overwrite+")",
 					type: "POST",
 					requestDigest: inOpt.digest,
-					data: inOpt.data
+					data: inOpt.data,
+					dataLength: inOpt.dataLength
 				})
 				.then(function(arrResults){
 					// Return the new `File` {object}
@@ -2199,8 +2199,15 @@
 
 						// AUTH: Cookie is required for GET and POST
 						objAjaxQuery.headers["Cookie"] = APP_OPTS.nodeCookie;
+						
 						// IMPORTANT: 'Content-Length' is required for file upload (etc.), otherwise, SP drops the connection immediately: (-1, System.IO.IOException)
-						if (objAjaxQuery.data) objAjaxQuery.headers["Content-Length"] = objAjaxQuery.data.length;
+						if ( inOpt.dataLength ) {
+							objAjaxQuery.headers["Content-Length"] = inOpt.dataLength;
+						}
+						else if (objAjaxQuery.data) {
+							objAjaxQuery.headers["Content-Length"] = objAjaxQuery.data.length;
+						}
+
 						var options = {
 							hostname: APP_OPTS.nodeServer,
 							path:     objAjaxQuery.url,
@@ -2245,9 +2252,15 @@
 								reject( JSON.parse(rawData).error.message.value);
 							});
 						});
+
 						// POST: Data is sent to SP via `write`
-						if ( objAjaxQuery.data ) request.write(objAjaxQuery.data);
-						request.end();
+						if ( objAjaxQuery.data && objAjaxQuery.data.pipe ) {
+							objAjaxQuery.data.pipe(request, {end: true});
+						}
+						else if ( objAjaxQuery.data ) {
+							request.write(objAjaxQuery.data);
+							request.end();
+						}
 					}
 					else {
 						// A:
