@@ -372,7 +372,7 @@
 		APP_OPTS.nodeServer = inOpt.server || '';
 		APP_OPTS.https = inOpt.https || null;
 		APP_OPTS.http = inOpt.http || null;
-		APP_OPTS.httpAgent = inOpt.httpAgent || null;
+		APP_OPTS.httpsAgent = inOpt.httpsAgent || null;
 		APP_OPTS.http = inOpt.http || null;
 		APP_OPTS.httpAgent = inOpt.httpAgent || null;
 	}
@@ -2217,7 +2217,12 @@
 						// custom connection agent
 						// @see https://nodejs.org/dist/latest-v18.x/docs/api/http.html#class-httpagent
 						if ( APP_OPTS.httpsAgent || APP_OPTS.httpAgent ) {
-							options.agent = APP_OPTS.httpsAgent || APP_OPTS.httpAgent;
+							let agent = APP_OPTS.httpsAgent || APP_OPTS.httpAgent;
+							if ( typeof agent === "function" ) {
+								agent = agent();
+							}
+							
+							options.agent = agent;
 						}
 
 						var request = https.request(options, function(res){
@@ -2225,6 +2230,10 @@
 							res.setEncoding( inOpt.headers && inOpt.headers.binaryStringResponseBody ? 'binary' : 'utf8' );
 							res.on('data', function(chunk){ rawData += chunk; });
 							res.on('end', function(){
+								if ( typeof (APP_OPTS.httpsAgent || APP_OPTS.httpAgent) === "function" ) {
+									options.agent.destroy();
+								}
+
 								// NOTE: SP errors come here, not `res.on(error)`, so check for errors!
 								if ( rawData.indexOf('HTTP Error') > -1 ) {
 									/* EX: bad URL is returned as
