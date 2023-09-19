@@ -88,7 +88,8 @@
 		https:            null, /* custom lib for http/https requests on nodejs */
 		http:             null,
 		httpsAgent:       null, /* custom http agent for connections, see https://nodejs.org/dist/latest-v18.x/docs/api/http.html#class-httpagent */
-		httpAgent:        null
+		httpAgent:        null,
+		setRequestOptions:null
 	};
 	// APP AUTHENTICATION
 	var APP_AUTH = {
@@ -375,6 +376,7 @@
 		APP_OPTS.httpsAgent = inOpt.httpsAgent || null;
 		APP_OPTS.http = inOpt.http || null;
 		APP_OPTS.httpAgent = inOpt.httpAgent || null;
+		APP_OPTS.setRequestOptions = inOpt.setRequestOptions || null;
 	}
 
 	// TODO: TARGET-1.11.0: Add `baseUrl` to `file()` method
@@ -2224,6 +2226,9 @@
 							
 							options.agent = agent;
 						}
+						if ( typeof APP_OPTS.setRequestOptions === "function" ) {
+							APP_OPTS.setRequestOptions(options);
+						}
 
 						var request = https.request(options, function(res){
 							var rawData = '';
@@ -2268,6 +2273,9 @@
 						}
 						else if ( objAjaxQuery.data ) {
 							request.write(objAjaxQuery.data);
+							request.end();
+						}
+						else {
 							request.end();
 						}
 					}
