@@ -2267,6 +2267,8 @@
 							});
 						});
 
+						request.on("error", reject);
+
 						// POST: Data is sent to SP via `write`
 						if ( objAjaxQuery.data && objAjaxQuery.data.pipe ) {
 							objAjaxQuery.data.pipe(request, {end: true});
